@@ -11,7 +11,7 @@ class StoreMarcaRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,15 @@ class StoreMarcaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'nome' =>['required', 'string', 'unique'],
+            'logo' => ['required']
         ];
     }
+
+    public function messages(){
+        return[
+            'nome.unique' => ['Esse nome já existe']
+        ];
+    }
+
 }

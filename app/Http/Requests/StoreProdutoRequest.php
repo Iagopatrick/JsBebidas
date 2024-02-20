@@ -11,7 +11,7 @@ class StoreProdutoRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,12 @@ class StoreProdutoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'nome' => ['required', 'string', 'unique:produtos,nome'],
+        ];
+    }
+    public function messages(){
+        return[
+            'nome.unique' => 'esse nome já existe',
         ];
     }
 }

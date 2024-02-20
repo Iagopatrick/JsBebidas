@@ -11,10 +11,15 @@ class MarcaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    
+    private $marcas;
+
+    public function __construct(Marca $marca){
+        $this->marcas = $marca;
+    }
+
     public function index()
     {
-        //
+        return $this->marcas->all();
     }
 
     /**
@@ -30,15 +35,17 @@ class MarcaController extends Controller
      */
     public function store(StoreMarcaRequest $request)
     {
-        //
+        $marca = Marca::create($request->all());
+        return $marca;
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Marca $marca)
+    public function show($id)
     {
-        //
+        $marca = $this->marcas->find($id);
+        return response()->json($marca);
     }
 
     /**
@@ -54,7 +61,9 @@ class MarcaController extends Controller
      */
     public function update(UpdateMarcaRequest $request, Marca $marca)
     {
-        //
+        
+        $marca->update($request->all());
+        return $marca;
     }
 
     /**
@@ -62,6 +71,7 @@ class MarcaController extends Controller
      */
     public function destroy(Marca $marca)
     {
-        //
+        $marca->delete();
+        return ['msg' => 'A marca foi removida com suscesso!'];
     }
 }
