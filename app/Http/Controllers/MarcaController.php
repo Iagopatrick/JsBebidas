@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreMarcaRequest;
 use App\Http\Requests\UpdateMarcaRequest;
 use App\Models\Marca;
+use Illuminate\Support\Facades\Storage;
 
 class MarcaController extends Controller
 {
@@ -35,7 +36,14 @@ class MarcaController extends Controller
      */
     public function store(StoreMarcaRequest $request)
     {
-        $marca = Marca::create($request->all());
+        
+        $imagem = $request->file('logo');
+        $imagem_urn = $imagem->store('imagens/marcas', 'public');
+
+        $marca = Marca::create([
+            'nome' => $request->nome,
+            'logo' => $imagem_urn
+        ]);
         return $marca;
     }
 
@@ -59,18 +67,35 @@ class MarcaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateMarcaRequest $request, Marca $marca)
+    public function update(UpdateMarcaRequest $request, $id)
     {
+        $marca = $this->marcas->find($id);
         
-        $marca->update($request->all());
-        return $marca;
+        if($request->file('logo')){
+            Storage::disk('public')->delete($marca->logo);
+
+        }
+        $imagem = $request->file('logo');
+        $imagem_urn = $imagem->store('imagens/marcas', 'public');
+        $marca->fill($request->all());
+        $marca->logo = $imagem_urn;
+
+        $marca->save();
+
+        return response()->json($marca);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Marca $marca)
-    {
+    public function destroy($id)
+    {   
+        $marca = $this->marcas->find($id);
+        if($marca == NULL){
+            return response()->json(['msg'=> 'Erro, essa marca não existe!']);
+        }
+        
+        Storage::disk('public')->delete($marca->logo);
         $marca->delete();
         return ['msg' => 'A marca foi removida com suscesso!'];
     }

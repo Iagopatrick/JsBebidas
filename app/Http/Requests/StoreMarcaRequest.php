@@ -22,14 +22,15 @@ class StoreMarcaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nome' =>['required', 'string', 'unique'],
+            'nome' =>['required', 'string', 'unique:marcas,nome'],
             'logo' => ['required']
         ];
     }
 
     public function messages(){
         return[
-            'nome.unique' => ['Esse nome já existe']
+            'nome.unique' => ['Esse nome já existe'],
+            'logo.required' =>['E preciso ter uma logo']
         ];
     }
 
